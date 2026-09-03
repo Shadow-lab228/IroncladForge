@@ -1,0 +1,8 @@
+{
+  "name": "Ironclad Forge",
+  "description": "Cross-platform AI software development environment with a medieval blacksmith forge identity",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

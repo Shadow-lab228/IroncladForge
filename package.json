@@ -1,22 +1,32 @@
 {
   "name": "ironcladforge",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.ts",
   "dependencies": {
     "expo": "~57.0.18",
     "expo-status-bar": "~57.0.1",
+    "lucide-react": "^1.40.0",
     "react": "19.2.3",
-    "react-native": "0.86.3"
+    "react-dom": "^19.2.8",
+    "react-native": "0.86.3",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
     "@types/react": "~19.2.2",
-    "typescript": "~6.0.3"
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~6.0.3",
+    "vite": "^8.2.2"
   },
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "dev": "vite --host 0.0.0.0 --port 3000",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 3000",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit"
   },
   "private": true
 }

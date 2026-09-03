@@ -1,0 +1,1 @@
+Small Node project that prints FORGE_LIVE_OK and writes it to dist/output.txt

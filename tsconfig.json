@@ -1,6 +1,30 @@
 {
-  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
-  }
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": [
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/data/**/*.ts",
+    "src/components/ForgeSidebarWeb.tsx",
+    "src/components/forge/WebForgeIcons.tsx",
+    "src/components/forge/ForgeStrikerWeb.tsx",
+    "src/components/views/**/*.tsx",
+    "src/vite-env.d.ts",
+    "vite.config.ts"
+  ]
 }
