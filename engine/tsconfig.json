@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "target": "es2023",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+    "lib": ["es2023"],
+    "types": ["node"],
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "../src/forge/engine.ts",
+    "../src/forge/events.ts",
+    "../src/forge/router/**/*.ts",
+    "../src/forge/providers/**/*.ts",
+    "../src/types/**/*.ts",
+    "../src/animation/registry.ts"
+  ]
+}

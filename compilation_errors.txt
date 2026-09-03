@@ -1,0 +1,29 @@
+engine/src/agent/TaskContext.ts(10,15): error TS2305: Module '"../PreviewRunner.ts"' has no exported member 'PreviewState'.
+engine/src/ForgeServer.ts(358,28): error TS2304: Cannot find name 'AgentTask'.
+engine/src/ForgeServer.ts(358,40): error TS2304: Cannot find name 'AgentTaskSnapshot'.
+engine/src/ForgeServer.ts(369,23): error TS7006: Parameter 's' implicitly has an 'any' type.
+engine/src/ForgeServer.ts(381,62): error TS2304: Cannot find name 'TaskRequest'.
+engine/src/LocalForgeEngine.ts(29,63): error TS2305: Module '"./PreviewRunner.ts"' has no exported member 'PreviewState'.
+engine/src/LocalForgeEngine.ts(29,82): error TS2305: Module '"./PreviewRunner.ts"' has no exported member 'PreviewStatus'.
+engine/src/LocalForgeEngine.ts(598,23): error TS2345: Argument of type '"Analyzing architecture"' is not assignable to parameter of type '"Preparing workshop" | "Engaging model" | "Forging structure" | "Hammering code" | "Tempering" | "Inspecting" | "Reforging" | "Quenching" | "Quenched"'.
+engine/src/LocalForgeEngine.ts(605,7): error TS2322: Type '"architecture.analyzed"' is not assignable to type '"session.started" | "blueprint.bound" | "provider.selected" | "model.selected" | "engine.started" | "agent.message" | "agent.tool" | "file.created" | "file.modified" | "file.deleted" | ... 34 more ... | "session.cancelled"'.
+engine/src/LocalForgeEngine.ts(729,31): error TS2339: Property 'blueprint' does not exist on type 'ForgeRequest | TaskRequest'.
+engine/src/PreviewRunner.ts(17,18): error TS2304: Cannot find name 'PreviewState'.
+engine/src/PreviewRunner.ts(31,26): error TS2304: Cannot find name 'PreviewState'.
+engine/src/PreviewRunner.ts(61,26): error TS2304: Cannot find name 'execSync'.
+engine/src/PreviewRunner.ts(70,26): error TS2304: Cannot find name 'execSync'.
+engine/src/PreviewRunner.ts(116,16): error TS2304: Cannot find name 'PreviewState'.
+engine/src/PreviewRunner.ts(120,25): error TS2304: Cannot find name 'PreviewState'.
+engine/src/PreviewRunner.ts(132,28): error TS2304: Cannot find name 'PreviewState'.
+engine/src/PreviewRunner.ts(171,27): error TS2304: Cannot find name 'PreviewStatus'.
+engine/src/PreviewRunner.ts(171,48): error TS2304: Cannot find name 'PreviewState'.
+engine/src/PreviewRunner.ts(228,18): error TS2304: Cannot find name 'PreviewState'.
+engine/src/PreviewRunner.ts(250,16): error TS2304: Cannot find name 'PreviewState'.
+engine/src/PreviewRunner.ts(263,26): error TS2304: Cannot find name 'PreviewState'.
+engine/src/PreviewRunner.ts(269,29): error TS2304: Cannot find name 'PreviewStatus'.
+engine/src/PreviewRunner.ts(269,59): error TS2304: Cannot find name 'PreviewState'.
+engine/src/PreviewRunner.ts(276,51): error TS2304: Cannot find name 'PreviewState'.
+engine/src/PreviewRunner.ts(298,54): error TS2304: Cannot find name 'PreviewState'.
+engine/src/PreviewRunner.ts(427,27): error TS2304: Cannot find name 'PreviewState'.
+engine/src/PreviewRunner.ts(444,25): error TS2304: Cannot find name 'PreviewState'.
+engine/src/PreviewRunner.ts(465,56): error TS2304: Cannot find name 'PreviewState'.

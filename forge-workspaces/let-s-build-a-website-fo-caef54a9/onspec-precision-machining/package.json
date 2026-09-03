@@ -1,0 +1,16 @@
+{
+  "name": "onspec-precision-machining",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "serve -s .",
+    "build": "echo 'Build complete'"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}

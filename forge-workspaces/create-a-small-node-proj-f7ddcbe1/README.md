@@ -1,0 +1,1 @@
+A minimal Node.js project with build script that outputs FORGE_LIVE_OK
