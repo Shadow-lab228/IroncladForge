@@ -952,7 +952,27 @@ npm run build
 </body>
 </html>`;
 
-    return {
+    // Replace index.html with the standalone interactive preview document
+    const indexIdx = files.findIndex((f) => f.path === 'index.html');
+    if (indexIdx !== -1) {
+      files[indexIdx] = {
+        path: 'index.html',
+        name: 'index.html',
+        type: 'file',
+        content: previewHtml,
+        size: previewHtml.length,
+      };
+    } else {
+      files.unshift({
+        path: 'index.html',
+        name: 'index.html',
+        type: 'file',
+        content: previewHtml,
+        size: previewHtml.length,
+      });
+    }
+
+    const projectObj: WorkspaceProject = {
       id,
       name: 'Ironclad Systems',
       description: blueprintText,
@@ -962,11 +982,16 @@ npm run build
       language: 'TypeScript',
       packageManager: 'npm',
       previewKind: 'web',
-      previewUrl: `data:text/html;charset=utf-8,${encodeURIComponent(previewHtml)}`,
+      previewUrl: `/workspaces/${id}/index.html`,
       port: 5173,
       files,
       createdAt: Date.now(),
     };
+
+    // Auto-sync project files to filesystem in the background
+    persistProjectToWorkspace(projectObj).catch(() => {});
+
+    return projectObj;
   }
 
   // Fallback for static or other types
@@ -981,7 +1006,7 @@ npm run build
     { path: 'README.md', name: 'README.md', type: 'file', content: `# ${title}\n\n${blueprintText}`, size: 100 }
   );
 
-  return {
+  const fallbackProj: WorkspaceProject = {
     id,
     name: title,
     description: blueprintText,
@@ -991,11 +1016,41 @@ npm run build
     language: blueprint.language,
     packageManager: blueprint.packageManager,
     previewKind: 'static',
-    previewUrl: `data:text/html;charset=utf-8,${encodeURIComponent(defaultHtml)}`,
+    previewUrl: `/workspaces/${id}/index.html`,
     port: 3000,
     files,
     createdAt: Date.now(),
   };
+
+  persistProjectToWorkspace(fallbackProj).catch(() => {});
+
+  return fallbackProj;
+}
+
+/**
+ * Persists project files to the disk workspace via backend API
+ */
+export async function persistProjectToWorkspace(project: WorkspaceProject): Promise<boolean> {
+  try {
+    const resSync = await fetch('/api/workspace/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        projectId: project.id,
+        files: project.files,
+      }),
+    });
+
+    const resProj = await fetch('/api/projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(project),
+    });
+
+    return resSync.ok && resProj.ok;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -1004,10 +1059,13 @@ npm run build
 export function applyEditToProject(existingProject: WorkspaceProject, editPrompt: string): WorkspaceProject {
   const combinedText = `${existingProject.blueprint} ${editPrompt}`;
   const updatedProject = forgeProjectFromBlueprint(combinedText);
-  return {
+  const result: WorkspaceProject = {
     ...updatedProject,
     id: existingProject.id,
     name: existingProject.name,
     createdAt: existingProject.createdAt,
+    previewUrl: `/workspaces/${existingProject.id}/index.html`,
   };
+  persistProjectToWorkspace(result).catch(() => {});
+  return result;
 }

@@ -6,6 +6,20 @@ export interface WorkspaceFile {
   size?: number;
 }
 
+export interface WorkspaceTask {
+  id: string;
+  projectId: string;
+  prompt: string;
+  status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
+  createdAt: number;
+  timestamp?: number;
+  completedAt?: number;
+  attempts?: number;
+  changedFiles?: string[];
+  diagnosticSummary?: string;
+  commands?: Array<{ command: string; exitCode: number | null; durationMs: number; stdout?: string; stderr?: string }>;
+}
+
 export interface WorkspaceProject {
   id: string;
   name: string;
@@ -21,6 +35,14 @@ export interface WorkspaceProject {
   files: WorkspaceFile[];
   createdAt: number;
   updatedAt?: number;
+  tasks?: WorkspaceTask[];
+  architecture?: string;
+  runtime?: string;
+  entryPoint?: string;
+  previewStatus?: 'RUNNING' | 'STARTING' | 'STOPPED' | 'ERROR';
+  lastBuildStatus?: 'PASS' | 'FAIL' | 'PENDING';
+  lastTaskId?: string;
+  lastPreviewUrl?: string;
 }
 
 export const INITIAL_WORKSPACES: WorkspaceProject[] = [
