@@ -20,6 +20,7 @@ export interface WorkspaceProject {
   port: number;
   files: WorkspaceFile[];
   createdAt: number;
+  updatedAt?: number;
 }
 
 export const INITIAL_WORKSPACES: WorkspaceProject[] = [

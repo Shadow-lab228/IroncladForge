@@ -27,3 +27,11 @@ export interface ProjectBlueprint {
   createdAt: number;
   updatedAt: number;
 }
+
+export const ProjectBlueprint = {
+  isValid(bp: unknown): bp is ProjectBlueprint {
+    if (!bp || typeof bp !== 'object') return false;
+    const b = bp as Record<string, unknown>;
+    return typeof b.id === 'string' && typeof b.framework === 'string' && typeof b.name === 'string';
+  },
+};

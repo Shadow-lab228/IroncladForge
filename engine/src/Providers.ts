@@ -67,6 +67,11 @@ export function providerConfigFor(choice: ModelChoice, enabledPrefs: ProviderPre
         providerId: 'ollama',
         baseURL: `${(baseUrl || 'http://127.0.0.1:11434').replace(/\/+$/, '')}/v1`,
       };
+    case 'local_offline':
+      return {
+        providerId: 'local_offline',
+        baseURL: `${(baseUrl || 'http://127.0.0.1:11434').replace(/\/+$/, '')}/v1`,
+      };
     case 'openrouter':
       return {
         providerId: 'openrouter',
@@ -77,6 +82,24 @@ export function providerConfigFor(choice: ModelChoice, enabledPrefs: ProviderPre
       return {
         providerId: 'grok',
         baseURL: 'https://api.x.ai/v1',
+        apiKey,
+      };
+    case 'gemini':
+      return {
+        providerId: 'gemini',
+        baseURL: 'https://generativelanguage.googleapis.com/v1beta',
+        apiKey,
+      };
+    case 'openai':
+      return {
+        providerId: 'openai',
+        baseURL: baseUrl || 'https://api.openai.com/v1',
+        apiKey,
+      };
+    case 'anthropic':
+      return {
+        providerId: 'anthropic',
+        baseURL: baseUrl || 'https://api.anthropic.com/v1',
         apiKey,
       };
     default:

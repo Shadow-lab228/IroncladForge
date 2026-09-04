@@ -159,7 +159,7 @@ export function ForgeView({
             <div className="flex items-center justify-between">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-[#a99c88] font-mono flex items-center gap-2">
                 <Cpu className="w-4 h-4 text-[#ff7a1a]" />
-                Engine Diagnostics
+                System Diagnostics
               </h2>
               <span className="text-xs text-[#57c08a] font-mono">Exit Code: 0</span>
             </div>
@@ -189,9 +189,9 @@ export function ForgeView({
             <div className="flex items-center justify-between">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-[#a99c88] font-mono flex items-center gap-2">
                 <Terminal className="w-4 h-4 text-[#ff7a1a]" />
-                Forge Engine Event Stream
+                Forge Event Stream
               </h2>
-              <span className="text-[11px] text-[#6f6558] font-mono">LONG-POLL BUS</span>
+              <span className="text-[11px] text-[#6f6558] font-mono">Live Event Bus</span>
             </div>
 
             <div className="bg-[#0b0806] p-3.5 rounded-lg border border-[#2a2320] font-mono text-xs text-[#a99c88] h-96 overflow-y-auto space-y-1.5">

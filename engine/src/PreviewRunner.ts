@@ -86,10 +86,7 @@ export class StaticWebPreviewRunner {
 
     // Use a simple local server for static files
     try {
-      // Simple static server using Node.js modules (or fallback to python)
-      const { exec } = await import('child_process');
-      
-      let startProcess: any = null;
+      let startProcess: ChildProcess | null = null;
       
       // Attempt to use Python static server first 
       if (!startProcess) {

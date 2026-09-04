@@ -7,7 +7,7 @@
  */
 import type { EngineSession } from './LocalForgeEngine.ts';
 import type { Blueprint } from '../../src/types/index.ts';
-import { architect } from './ApplicationArchitect.ts';
+import { architect, type ArchitectureDecisionRecord } from './ApplicationArchitect.ts';
 
 /**
  * Perform architecture-first analysis for Phase 7 (Reforging).
@@ -47,7 +47,10 @@ export async function performPhase7Architecture(session: EngineSession, blueprin
  * @param requirements - Requirements to analyze
  * @returns List of architectural decisions for debugging/inspection
  */
-export function getArchitectureDecisions(session: EngineSession, requirements: string[]): any[] {
+export function getArchitectureDecisions(
+  session: EngineSession,
+  requirements: string[]
+): ArchitectureDecisionRecord[] {
   return architect.generateADR(requirements);
 }
 
@@ -56,6 +59,11 @@ export function getArchitectureDecisions(session: EngineSession, requirements: s
  * 
  * @returns Cache stats for the architect instance
  */
-export function getArchitectCacheStats(): any {
+export function getArchitectCacheStats(): {
+  hits: number;
+  misses: number;
+  size: number;
+  hitRate: number;
+} {
   return architect.getCacheStats();
 }

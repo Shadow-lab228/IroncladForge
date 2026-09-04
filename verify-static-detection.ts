@@ -1,9 +1,10 @@
 /**
  * Verification script to test that static website detection works
  */
-import { detectProject } from '../engine/src/ProjectDetector.ts';
+import { detectProject } from './engine/src/ProjectDetector.ts';
 import { mkdirSync, writeFileSync, mkdtempSync } from 'node:fs';
-import { tmpdir, join } from 'node:path';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 // Function to create a mock workspace similar to the reproduction case
 function createStaticWebWorkspace(): string {

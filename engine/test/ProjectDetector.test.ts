@@ -64,7 +64,7 @@ test('detects a plain static site (index.html, no package.json)', () => {
 
 test('detects static site with package.json but index.html', () => {
   const dir = makeWorkspace({
-    'package.json': PKG({ react: '^19' }),
+    'package.json': PKG({}),
     'index.html': '<html><body>hi</body></html>',
   });
   const det = detectProject(dir);

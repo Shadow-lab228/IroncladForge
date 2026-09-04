@@ -43,7 +43,14 @@ export interface ActivityEntry {
 
 /** User-facing configuration model written by Settings. */
 export interface ProviderPrefs {
-  providerId: 'ollama' | 'openrouter' | 'grok';
+  providerId:
+    | 'ollama'
+    | 'local_offline'
+    | 'openrouter'
+    | 'grok'
+    | 'gemini'
+    | 'openai'
+    | 'anthropic';
   baseUrl?: string;
   apiKey?: string;
   enabled: boolean;
@@ -55,6 +62,10 @@ export interface AppSettings {
   providers: ProviderPrefs[];
   /** Preferred local model, if the user pinned one. */
   preferredLocalModel: string;
+  /** Active selected provider in the UI header */
+  activeProviderId?: string;
+  /** Active selected model name in the UI header */
+  activeModelName?: string;
   /** Whether free-only filtering applies to remote fallback. */
   freeOnlyRemote: boolean;
   /** Base URL of the local Node Forge engine server. */

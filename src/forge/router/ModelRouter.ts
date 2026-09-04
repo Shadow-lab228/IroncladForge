@@ -14,17 +14,25 @@ export type RoutingPolicy =
   | 'AUTO'
   | 'FREE_ONLY'
   | 'LOCAL_FIRST'
+  | 'LOCAL_OFFLINE_ONLY'
   | 'OLLAMA_ONLY'
   | 'OPENROUTER_ONLY'
-  | 'GROK_ONLY';
+  | 'GROK_ONLY'
+  | 'GEMINI_ONLY'
+  | 'OPENAI_ONLY'
+  | 'ANTHROPIC_ONLY';
 
 export const ROUTING_POLICIES: RoutingPolicy[] = [
   'AUTO',
   'FREE_ONLY',
   'LOCAL_FIRST',
+  'LOCAL_OFFLINE_ONLY',
   'OLLAMA_ONLY',
   'OPENROUTER_ONLY',
   'GROK_ONLY',
+  'GEMINI_ONLY',
+  'OPENAI_ONLY',
+  'ANTHROPIC_ONLY',
 ];
 
 export interface RoutingPolicyMeta {
@@ -34,12 +42,16 @@ export interface RoutingPolicyMeta {
 }
 
 export const ROUTING_POLICY_META: Record<RoutingPolicy, RoutingPolicyMeta> = {
-  AUTO: { id: 'AUTO', label: 'Auto', description: 'Best available model for the task, any provider.' },
-  FREE_ONLY: { id: 'FREE_ONLY', label: 'Free Only', description: 'Restrict to free models, preferring local.' },
-  LOCAL_FIRST: { id: 'LOCAL_FIRST', label: 'Local First', description: 'Prefer the local Ollama forge when available.' },
+  AUTO: { id: 'AUTO', label: 'Auto (Intelligent)', description: 'Best available model across all configured providers.' },
+  FREE_ONLY: { id: 'FREE_ONLY', label: 'Free Only', description: 'Strictly use free models, prioritizing local.' },
+  LOCAL_FIRST: { id: 'LOCAL_FIRST', label: 'Local First', description: 'Prefer offline local machine models, fall back to cloud if permitted.' },
+  LOCAL_OFFLINE_ONLY: { id: 'LOCAL_OFFLINE_ONLY', label: 'Local / Offline Only', description: 'Strict air-gapped local models only. Never route to cloud.' },
   OLLAMA_ONLY: { id: 'OLLAMA_ONLY', label: 'Ollama Only', description: 'Use only local Ollama models.' },
   OPENROUTER_ONLY: { id: 'OPENROUTER_ONLY', label: 'OpenRouter Only', description: 'Use only OpenRouter models.' },
   GROK_ONLY: { id: 'GROK_ONLY', label: 'Grok Only', description: 'Use only Grok / xAI models.' },
+  GEMINI_ONLY: { id: 'GEMINI_ONLY', label: 'Google Gemini Only', description: 'Use only Google Gemini models.' },
+  OPENAI_ONLY: { id: 'OPENAI_ONLY', label: 'OpenAI Only', description: 'Use only OpenAI models.' },
+  ANTHROPIC_ONLY: { id: 'ANTHROPIC_ONLY', label: 'Anthropic Claude Only', description: 'Use only Anthropic Claude models.' },
 };
 
 /** What the caller is trying to do (used to weight coding vs. general models). */
@@ -70,13 +82,21 @@ function policyAccepts(policy: RoutingPolicy, m: ModelInfo, freeOnlyForRemote: b
   switch (policy) {
     case 'OLLAMA_ONLY':
       return m.providerId === 'ollama';
+    case 'LOCAL_OFFLINE_ONLY':
+      return m.providerId === 'local_offline' || m.providerId === 'ollama';
     case 'OPENROUTER_ONLY':
       return m.providerId === 'openrouter';
     case 'GROK_ONLY':
       return m.providerId === 'grok';
+    case 'GEMINI_ONLY':
+      return m.providerId === 'gemini';
+    case 'OPENAI_ONLY':
+      return m.providerId === 'openai';
+    case 'ANTHROPIC_ONLY':
+      return m.providerId === 'anthropic';
     case 'LOCAL_FIRST':
       // Local always accepted; remote only accepted when forced free-only flags off.
-      return m.providerId === 'ollama' || !freeOnlyForRemote;
+      return m.providerId === 'ollama' || m.providerId === 'local_offline' || !freeOnlyForRemote;
     case 'FREE_ONLY':
       return m.free;
     case 'AUTO':
@@ -92,7 +112,7 @@ function policyAccepts(policy: RoutingPolicy, m: ModelInfo, freeOnlyForRemote: b
 function rank(m: ModelInfo, preferCoding: boolean): number {
   let score = m.score ?? 0;
   if (preferCoding && m.coding) score += 20;
-  if (m.providerId === 'ollama') score += 6; // local-first bias
+  if (m.providerId === 'ollama' || m.providerId === 'local_offline') score += 8; // local-first bias
   if (m.free) score += 4;
   return score;
 }

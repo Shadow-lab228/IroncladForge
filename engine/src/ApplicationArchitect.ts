@@ -1,4 +1,4 @@
-import { ProjectBlueprint } from './ProjectBlueprint.ts';
+import type { ProjectBlueprint } from './ProjectBlueprint.ts';
 
 export type ArchitectureAnalysis = {
   framework: string;
@@ -6,6 +6,15 @@ export type ArchitectureAnalysis = {
   patterns: string[];
   components: string[];
 };
+
+export interface ArchitectureDecisionRecord {
+  id: string;
+  title: string;
+  status: string;
+  decision: string;
+  date: string;
+  rationale: string;
+}
 
 /**
  * The ApplicationArchitect - analyzes requirement blueprints and determines 
@@ -15,6 +24,16 @@ export class ApplicationArchitect {
   private cache: Map<string, ProjectBlueprint> = new Map();
   private cacheStats: { hits: number; misses: number } = { hits: 0, misses: 0 };
   
+  /**
+   * Analyze a project blueprint or prompt string and return an architecture decision
+   */
+  analyze(input: string | { text: string }): ProjectBlueprint {
+    if (typeof input === 'string') {
+      return this.analyzeBlueprint({ text: input });
+    }
+    return this.analyzeBlueprint(input);
+  }
+
   /**
    * Analyze a project blueprint and return an architecture decision
    * 
@@ -43,40 +62,42 @@ export class ApplicationArchitect {
     let runtime: 'node' | 'web' | 'expo-web' = 'web';
     
     // Analyze the requirements to determine architecture
-    if (text.includes('mobile') || text.includes('app')) {
+    if (text.includes('static html') || text.includes('plain html') || text.includes('simple html') || text.includes('static page')) {
+      framework = 'static-web';
+      type = 'static-web';
+      runtime = 'web';
+      approach = 'component-based';
+      language = 'javascript';
+    } else if (text.includes('mobile') || text.includes('expo') || text.includes('react-native') || text.includes('react native') || text.includes('ios') || text.includes('android')) {
       framework = 'expo';
       type = 'mobile';
       runtime = 'expo-web';
       approach = 'component-based';
-    } else if (text.includes('backend') || text.includes('server')) {
+    } else if (text.includes('full-stack') || text.includes('fullstack') || text.includes('ssr') || text.includes('next.js') || text.includes('nextjs') || (text.includes('next') && !text.includes('nexus'))) {
+      framework = 'next';
+      type = 'fullstack';
+      runtime = 'node';
+      approach = 'monolith';
+    } else if (text.includes('backend') || text.includes('server') || text.includes('microservice') || (text.includes('api') && !text.includes('web'))) {
       framework = 'node';
       type = 'backend';
       runtime = 'node';
       approach = 'microservice';
-    } else if (text.includes('full-stack') || text.includes('next')) {
-      framework = 'next';
-      type = 'fullstack';
-      approach = 'monolith';
-    } else if (text.includes('static') || text.includes('website') || text.includes('web')) {
-      // For a simple website, prefer next.js for better modern web capabilities
-      framework = 'next';
-      type = 'web';
-      approach = 'component-based';
-    } else if (text.includes('spa') || text.includes('single page')) {
+    } else {
+      // Modern frontend application or website -> React + TypeScript + Vite
       framework = 'react';
       type = 'web';
+      runtime = 'web';
       approach = 'component-based';
-    } else if (text.includes('api')) {
-      framework = 'node';
-      type = 'backend';
-      approach = 'microservice';
     }
     
-    // Language detection
-    if (text.includes('typescript') || text.includes('ts')) {
-      language = 'typescript';
-    } else {
-      language = 'javascript';
+    // Language detection (defaults to TypeScript for modern applications unless explicit JS requested)
+    if (framework !== 'static-web') {
+      if (text.includes('plain javascript') || text.includes('pure javascript') || text.includes('vanilla javascript') || text.includes('vanilla js')) {
+        language = 'javascript';
+      } else {
+        language = 'typescript';
+      }
     }
     
     // Determine package manager preference based on framework
@@ -127,11 +148,11 @@ export class ApplicationArchitect {
       runtime,
       patterns,
       components,
-      entryPoint: type === 'backend' ? 'src/server.ts' : 'src/main.jsx',
-      structure: this.generateStructure(type, framework),
+      entryPoint: type === 'backend' ? 'src/server.ts' : (framework === 'react' ? (language === 'typescript' ? 'src/main.tsx' : 'src/main.jsx') : (framework === 'next' ? 'src/app/page.tsx' : 'index.html')),
+      structure: this.generateStructure(type, framework, language),
       dependencies: this.generateDependencies(framework, type),
       scripts: this.generateScripts(framework, type),
-      hasPackageJson: true,
+      hasPackageJson: framework !== 'static-web',
       createdAt: Date.now(),
       updatedAt: Date.now()
     };
@@ -144,9 +165,31 @@ export class ApplicationArchitect {
   /**
    * Generate file structure based on project type and framework
    */
-  private generateStructure(type: string, framework: string): string[] {
+  private generateStructure(type: string, framework: string, language: string = 'typescript'): string[] {
     const structure: string[] = [];
+    const ext = language === 'typescript' ? 'tsx' : 'jsx';
+    const tsExt = language === 'typescript' ? 'ts' : 'js';
     
+    if (framework === 'react') {
+      structure.push('package.json');
+      structure.push(language === 'typescript' ? 'tsconfig.json' : 'jsconfig.json');
+      structure.push(`vite.config.${tsExt}`);
+      structure.push('index.html');
+      structure.push('src/');
+      structure.push(`src/main.${ext}`);
+      structure.push(`src/App.${ext}`);
+      structure.push('src/index.css');
+      structure.push('src/components/');
+      structure.push(`src/components/Header.${ext}`);
+      structure.push(`src/components/Hero.${ext}`);
+      structure.push(`src/components/Features.${ext}`);
+      structure.push(`src/components/Footer.${ext}`);
+      structure.push('public/');
+      structure.push('README.md');
+      structure.push('.gitignore');
+      return structure;
+    }
+
     if (type === 'web' || type === 'fullstack') {
       structure.push('public/');
       structure.push('src/');
@@ -169,6 +212,12 @@ export class ApplicationArchitect {
       structure.push('src/routes/');
       structure.push('src/middleware/');
       structure.push('tests/');
+    } else if (type === 'static-web') {
+      structure.push('index.html');
+      structure.push('styles.css');
+      structure.push('script.js');
+      structure.push('README.md');
+      return structure;
     }
     
     structure.push('package.json');
@@ -253,9 +302,9 @@ export class ApplicationArchitect {
   /**
    * Generate Architecture Decision Records (ADRs) for analysis
    */
-  generateADR(requirements: string[]): any[] {
+  generateADR(requirements: string[]): ArchitectureDecisionRecord[] {
     // Generate ADRs based on requirements 
-    const adrList = [];
+    const adrList: ArchitectureDecisionRecord[] = [];
     
     for (let i = 0; i < requirements.length; i++) {
       adrList.push({
@@ -291,10 +340,12 @@ export class ApplicationArchitect {
    * Get cache statistics for debugging
    */
   getCacheStats() {
+    const total = this.cacheStats.hits + this.cacheStats.misses;
     return {
       hits: this.cacheStats.hits,
       misses: this.cacheStats.misses,
-      size: this.cache.size
+      size: this.cache.size,
+      hitRate: total > 0 ? this.cacheStats.hits / total : 0,
     };
   }
 }

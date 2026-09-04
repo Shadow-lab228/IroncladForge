@@ -1,5 +1,5 @@
 // Test script for Phase 7B integration 
-import { ApplicationArchitect } from './src/ApplicationArchitect.ts';
+import { ApplicationArchitect } from './engine/src/ApplicationArchitect.ts';
 
 async function testArchitecture() {
     console.log("=== Testing Architecture Selection ===");

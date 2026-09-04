@@ -1,8 +1,24 @@
 import React, { useState } from 'react';
-import { Hammer, Sparkles, CheckCircle2, ArrowRight, Play, Terminal, Cpu } from 'lucide-react';
+import {
+  Hammer,
+  Sparkles,
+  CheckCircle2,
+  ArrowRight,
+  Play,
+  Terminal,
+  Cpu,
+  Dices,
+  RefreshCw,
+  Sparkle,
+} from 'lucide-react';
 import { ForgeStrikerWeb } from '../forge/ForgeStrikerWeb';
 import { EmberIcon } from '../forge/WebForgeIcons';
 import type { WorkspaceProject } from '../../data/workspaces';
+import {
+  RANDOM_PROMPTS,
+  getRandomPromptByCategory,
+  type PromptExample,
+} from '../../data/randomPrompts';
 
 interface WorkshopViewProps {
   onStartForge: (prompt: string, policy: string) => void;
@@ -17,27 +33,16 @@ interface WorkshopViewProps {
   onPolicyChange: (policy: string) => void;
 }
 
-const PRESETS = [
-  {
-    title: "Jake's Lawncare",
-    desc: 'Lawn maintenance, quote calculator, and booking',
-    prompt: "Build a modern, responsive website for Jake's Lawncare & Services featuring lawn mowing, aeration, fertilization, customer testimonials, and an appointment booking form.",
-  },
-  {
-    title: 'Ironclad Systems',
-    desc: 'Cybersecurity solutions & penetration testing portal',
-    prompt: 'Create an enterprise software company website for Ironclad Systems with security auditing services, products showcase (Shield, SecureVault), and contact form.',
-  },
-  {
-    title: 'Onspec Precision',
-    desc: 'CNC machining, turning & CAD quoting portal',
-    prompt: 'A website for a machinist shop called Onspec Precision Machining with CNC capabilities, material tolerance specs, and an RFQ quote form.',
-  },
-  {
-    title: 'Node Microservice',
-    desc: 'Lightweight Node.js service with build pipeline',
-    prompt: 'Create a lightweight Node.js microservice architecture with modular structure, scripts, and build verification runner.',
-  },
+const CATEGORIES = [
+  'All',
+  'SaaS',
+  'Dashboards',
+  'Developer Tools',
+  'E-commerce',
+  'CRM',
+  'Productivity',
+  'AI Applications',
+  'Project Management',
 ];
 
 const POLICIES = [
@@ -61,9 +66,14 @@ export function WorkshopView({
   onPolicyChange,
 }: WorkshopViewProps) {
   const [prompt, setPrompt] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [activeSample, setActiveSample] = useState<PromptExample | null>(null);
 
-  const handlePresetSelect = (presetPrompt: string) => {
-    setPrompt(presetPrompt);
+  const handleRollRandomPrompt = (cat?: string) => {
+    const targetCategory = cat || selectedCategory;
+    const picked = getRandomPromptByCategory(targetCategory, activeSample?.id);
+    setActiveSample(picked);
+    setPrompt(picked.prompt);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -76,22 +86,29 @@ export function WorkshopView({
     <div className="flex-1 overflow-y-auto p-6 md:p-8 max-w-7xl mx-auto w-full space-y-6">
       {/* Workshop Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#352d28]">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold font-medieval tracking-wide text-[#e8dcc8] flex items-center gap-3">
-            <span className="text-[#ff7a1a]">Workshop</span>
-            <span className="text-xs px-2.5 py-1 rounded bg-[#282220] text-[#ffb347] font-sans font-medium border border-[#352d28]">
-              Phase 7B
-            </span>
-          </h1>
-          <p className="text-sm text-[#a99c88] mt-1">
-            Blacksmith blueprint specification &bull; Autonomous agent forge pipeline
-          </p>
+        <div className="flex items-center gap-3.5">
+          <img
+            src="/ironclad-forge-logo.jpg"
+            alt="Ironclad Forge"
+            className="w-12 h-12 rounded-xl object-cover border border-[#ff7a1a]/40 shadow-lg shadow-[#ff7a1a]/15 shrink-0"
+          />
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold font-medieval tracking-wide text-[#e8dcc8] flex items-center gap-3">
+              <span className="text-[#ff7a1a]">Ironclad Forge</span>
+              <span className="text-xs px-2.5 py-1 rounded bg-[#282220] text-[#ffb347] font-sans font-semibold border border-[#352d28]">
+                STUDIO WORKSHOP
+              </span>
+            </h1>
+            <p className="text-xs sm:text-sm text-[#a99c88] mt-0.5">
+              Describe an application &bull; Forge plans, codes, builds, previews, and iterates
+            </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#161210] border border-[#352d28] text-xs text-[#57c08a]">
             <span className="w-2 h-2 rounded-full bg-[#57c08a] animate-pulse" />
-            <span className="font-mono">ENGINE ONLINE :7171</span>
+            <span className="font-mono">PIPELINE READY</span>
           </div>
         </div>
       </div>
@@ -119,25 +136,71 @@ export function WorkshopView({
                 className="w-full bg-[#1f1a17] text-[#e8dcc8] text-sm rounded-lg p-3.5 border border-[#352d28] focus:border-[#ff7a1a] focus:outline-none focus:ring-1 focus:ring-[#ff7a1a] transition-all placeholder-[#6f6558] font-mono resize-y"
               />
 
-              {/* Quick Presets */}
-              <div>
-                <span className="text-xs text-[#a99c88] font-medium block mb-2">Preset Blueprints:</span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {PRESETS.map((p) => (
+              {/* Random Prompt Generator System */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-[#a99c88] font-medium flex items-center gap-1.5">
+                    <Dices className="w-3.5 h-3.5 text-[#ff7a1a]" />
+                    <span>Inspiration & Random Prompts:</span>
+                  </span>
+                  <button
+                    type="button"
+                    disabled={isForging}
+                    onClick={() => handleRollRandomPrompt()}
+                    className="px-2.5 py-1 rounded bg-[#282220] hover:bg-[#352d28] border border-[#ff7a1a]/30 hover:border-[#ff7a1a] text-xs font-mono text-[#ffb347] flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
+                  >
+                    <RefreshCw className="w-3 h-3 text-[#ff7a1a]" />
+                    <span>Roll Random Prompt</span>
+                  </button>
+                </div>
+
+                {/* Category Filter Pills */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+                  {CATEGORIES.map((cat) => (
                     <button
-                      key={p.title}
+                      key={cat}
                       type="button"
                       disabled={isForging}
-                      onClick={() => handlePresetSelect(p.prompt)}
-                      className="text-left p-2.5 rounded-lg bg-[#1f1a17] border border-[#2a2320] hover:border-[#ff7a1a]/60 hover:bg-[#282220] transition-colors group"
+                      onClick={() => {
+                        setSelectedCategory(cat);
+                        handleRollRandomPrompt(cat);
+                      }}
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-mono whitespace-nowrap transition-all border ${
+                        selectedCategory === cat
+                          ? 'bg-[#ff7a1a]/20 border-[#ff7a1a] text-[#ffb347] font-semibold'
+                          : 'bg-[#1f1a17] border-[#2a2320] text-[#a99c88] hover:text-[#e8dcc8] hover:border-[#352d28]'
+                      }`}
                     >
-                      <div className="text-xs font-semibold text-[#e8dcc8] group-hover:text-[#ffb347]">
-                        {p.title}
-                      </div>
-                      <div className="text-[11px] text-[#6f6558] truncate">{p.desc}</div>
+                      {cat}
                     </button>
                   ))}
                 </div>
+
+                {/* Active Random Prompt Highlight Card */}
+                {activeSample && (
+                  <div className="p-3 rounded-lg bg-[#1f1a17] border border-[#352d28] flex items-start justify-between gap-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#282220] text-[#ffb347] border border-[#352d28]">
+                          {activeSample.badge}
+                        </span>
+                        <span className="text-xs font-semibold text-[#e8dcc8]">
+                          {activeSample.title}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#a99c88] line-clamp-2">
+                        {activeSample.prompt}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRollRandomPrompt()}
+                      className="text-[11px] font-mono text-[#ff7a1a] hover:underline shrink-0"
+                    >
+                      Next &rarr;
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Forge Action Button */}

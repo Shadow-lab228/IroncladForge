@@ -2,9 +2,10 @@
  * Test script to verify that static website detection works properly.
  * This simulates a simple static HTML/CSS/JS project with index.html referencing assets
  */
-import { detectProject } from '../engine/src/ProjectDetector.ts';
+import { detectProject } from './engine/src/ProjectDetector.ts';
 import { mkdtempSync, writeFileSync, mkdirSync } from 'node:fs';
-import { tmpdir, join } from 'node:path';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 // Function to create a mock workspace similar to what would be generated
 function createStaticProjectWorkspace(): string {
